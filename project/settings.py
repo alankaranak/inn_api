@@ -23,6 +23,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
+
+    'company',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL="company.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -111,6 +115,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
     "DATE_INPUT_FORMATS": ["%d-%m-%Y", "%d.%m.%Y", '%Y-%m-%d'],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 # Default primary key field type
