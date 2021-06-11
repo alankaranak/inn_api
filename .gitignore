@@ -143,3 +143,5 @@ docker-compose.*.yml
 !docker-compose.example.yml
 
 /static
+
+/import/*
