@@ -65,7 +65,7 @@ https://example.com/swagger - Автодокументация апи
 ## Ход работы
 
 
-Отправьте POST запрос по адресу `https://example.com/api/v1/` с параметрами `uid`, `inn`, `address` в теле запроса
+Отправьте GET запрос по адресу `https://example.com/api/v1/` с параметрами `uid`, `inn`, `address` в теле запроса
 
 `uid` - Уникальный идентификатор пользователя
 
