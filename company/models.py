@@ -31,16 +31,6 @@ class Company(models.Model):
         except cls.DoesNotExist:
             company = cls.objects.create(inn=inn, name=inn, address=inn)
             return company
-            
-    
-    @classmethod
-    def checkout_inn_address(cls, inn: str, address: str) -> bool:
-        """Проверка ИНН и адреса на существование записи."""
-        if not inn:
-            return
-        if not address:
-            return
-        return cls.objects.filter(inn=inn, address__icontains=address).exists()
 
 
 class Person(models.Model):
@@ -52,7 +42,7 @@ class Person(models.Model):
 
     fio = models.CharField(verbose_name="ФИО", max_length=150)
     uid = models.UUIDField(verbose_name="ИД пользователя", default=uuid.uuid4, unique=True)
-    inn = models.ForeignKey(
+    company = models.ForeignKey(
         Company, 
         on_delete=models.SET_NULL,
         verbose_name="ИНН компании",
@@ -76,12 +66,33 @@ class Person(models.Model):
             return cls(uid=uid)
 
     @classmethod
-    def checkout_uid(cls, uid: str) -> bool:
-        """Проверка существования записи в базе по uid."""
-        if not uid:
-            return None
+    def checkout_data(cls, uid: str, inn: str, address: str) -> int:
+        """Последовательная проверка существования записи.
 
-        return cls.objects.filter(uid=uid).exists()
+        Параметры:
+        `uid`, `inn`, `address` - str
+        
+        Возвращает: `0` / `1`
+
+        `0` - Совпадений не найдено
+        `1` - Совпадение найдено
+        """
+        if not uid:
+            return 0
+        if not inn:
+            return 0
+        if not address or address is "":
+            return 0
+
+        if not isinstance(uid, uuid.UUID):
+            return 0
+
+        qs = cls.objects.filter(uid=uid, company__inn=inn, company__address__icontains=address)
+        print(qs)
+        if qs.exists():
+            return 1
+
+        return 0
 
 
 class User(AbstractUser):
@@ -89,7 +100,7 @@ class User(AbstractUser):
 
     fio = models.CharField(verbose_name="ФИО", max_length=150)
     uid = models.UUIDField(verbose_name="ИД пользователя", default=uuid.uuid4, unique=True)
-    inn = models.ForeignKey(
+    company = models.ForeignKey(
         Company, 
         on_delete=models.SET_NULL,
         verbose_name="ИНН компании",

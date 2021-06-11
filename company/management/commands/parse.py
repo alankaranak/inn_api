@@ -1,8 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 import csv
 from django.conf import settings
-from pathlib import Path
-
 from company.models import Person, Company
 
 

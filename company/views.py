@@ -36,13 +36,5 @@ class IndexView(views.APIView):
         uid = data.get('uid', None)
         inn = data.get('inn', None)
         address = data.get('address', '')
-        response_data['result'] = self.checkout_data(uid, inn, address)
+        response_data['result'] = Person.checkout_data(uid, inn, address)
         return Response(response_data)
-
-    def checkout_data(self, uid, inn, address):
-        """Последовательная проверка существования записи."""
-        if not Person.checkout_uid(uid):
-            return 0
-        if not Company.checkout_inn_address(inn, address):
-            return 0
-        return 1
