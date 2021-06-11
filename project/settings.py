@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_yasg',
 
     'company',
@@ -116,6 +117,12 @@ REST_FRAMEWORK = {
     ],
     "DATE_INPUT_FORMATS": ["%d-%m-%Y", "%d.%m.%Y", '%Y-%m-%d'],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAdminUser'
+    ),
 }
 
 # Default primary key field type

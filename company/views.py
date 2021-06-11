@@ -8,6 +8,7 @@ from drf_yasg import openapi
 
 
 class IndexView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated,]
     inn_param_config = openapi.Parameter('inn', in_=openapi.IN_QUERY, description='ИНН', type=openapi.TYPE_STRING)
     uid_param_config = openapi.Parameter('uid', in_=openapi.IN_QUERY, description='Идентификатор', type=openapi.TYPE_STRING)
     address_param_config = openapi.Parameter('address', in_=openapi.IN_QUERY, description='Адрес', type=openapi.TYPE_STRING)
