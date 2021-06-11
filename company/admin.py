@@ -4,7 +4,7 @@ from django.forms.widgets import Widget
 from company.models import Person, User, Company
 from django import forms
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import AdminPasswordChangeForm, ReadOnlyPasswordHashField, ReadOnlyPasswordHashWidget
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 
 class UserCreationForm(forms.ModelForm):
@@ -15,7 +15,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', )
+        fields = ('username', )
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -66,7 +66,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'is_superuser')
     list_filter = ('is_superuser',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'username', 'password')}),
         ('Permissions', {'fields': (
             'is_superuser', 'is_active', 
             )
@@ -82,7 +82,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2')}
+            'fields': ('username', 'password1', 'password2')}
         ),
     )
     search_fields = ('email',)
