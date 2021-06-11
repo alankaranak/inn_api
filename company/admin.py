@@ -7,9 +7,9 @@ class PersonAdmin(admin.ModelAdmin):
 
 
     def display_inn(self, obj):
-        if not obj.inn:
+        if not obj.company:
             return "Н\Д"
-        return obj.inn.inn
+        return obj.company.inn
     display_inn.short_description = 'ИНН компании'
 
 
