@@ -2,6 +2,7 @@ import re
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+from company.managers import CustomUserManager
 
 
 class Company(models.Model):
@@ -107,3 +108,6 @@ class User(AbstractUser):
         related_name="users",
         null=True,
     )
+
+    USERNAME_FIELD = 'username'
+    objects = CustomUserManager()
