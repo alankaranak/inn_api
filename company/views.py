@@ -1,6 +1,6 @@
 from rest_framework import response
 from rest_framework.response import Response
-from company.models import Company, User
+from company.models import Company, Person
 from django.shortcuts import render
 from rest_framework import views, authentication, permissions
 from drf_yasg.utils import swagger_auto_schema
@@ -41,10 +41,8 @@ class IndexView(views.APIView):
 
     def checkout_data(self, uid, inn, address):
         """Последовательная проверка существования записи."""
-        if User.checkout_uid(uid):
-            return 1
-        if Company.checkout_inn(inn):
-            return 1
-        if Company.checkout_address(address):
-            return 1
-        return 0
+        if not Person.checkout_uid(uid):
+            return 0
+        if not Company.checkout_inn_address(inn, address):
+            return 0
+        return 1
