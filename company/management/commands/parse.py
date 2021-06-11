@@ -27,6 +27,6 @@ class Command(BaseCommand):
         company = Company.get_company(inn)
         person = Person.get_person(uid)
         person.fio = title
-        person.inn = company
+        person.company = company
         person.save()
         print(person)
