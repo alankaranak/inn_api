@@ -99,15 +99,5 @@ class Person(models.Model):
 class User(AbstractUser):
     """Представляет модель пользователя."""
 
-    fio = models.CharField(verbose_name="ФИО", max_length=150)
-    uid = models.UUIDField(verbose_name="ИД пользователя", default=uuid.uuid4, unique=True)
-    company = models.ForeignKey(
-        Company, 
-        on_delete=models.SET_NULL,
-        verbose_name="ИНН компании",
-        related_name="users",
-        null=True,
-    )
-
     USERNAME_FIELD = 'username'
     objects = CustomUserManager()
