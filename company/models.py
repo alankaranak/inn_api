@@ -1,7 +1,7 @@
-import re
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+from company.managers import CustomUserManager
 
 
 class Company(models.Model):
@@ -37,8 +37,8 @@ class Person(models.Model):
     """Представляет модель человека."""
 
     class Meta:
-        verbose_name = 'Персона'
-        verbose_name_plural = 'Персоны'
+        verbose_name = 'Лицензия'
+        verbose_name_plural = 'Лицензии'
 
     fio = models.CharField(verbose_name="ФИО", max_length=150)
     uid = models.UUIDField(verbose_name="ИД пользователя", default=uuid.uuid4, unique=True)
@@ -66,7 +66,7 @@ class Person(models.Model):
             return cls(uid=uid)
 
     @classmethod
-    def checkout_data(cls, uid: str, inn: str, address: str) -> int:
+    def checkout_data(cls, uid: uuid.UUID, inn: str, address: str) -> int:
         """Последовательная проверка существования записи.
 
         Параметры:
@@ -78,17 +78,16 @@ class Person(models.Model):
         `1` - Совпадение найдено
         """
         if not uid:
-            return 0
-        if not inn:
-            return 0
-        if not address or address is "":
-            return 0
+            raise ValueError('Поле uid обязательно')
+        if not inn or inn == "":
+            raise ValueError('Поле inn обязательно')
+        if not address or address == "":
+            raise ValueError('Поле address обязательно')
 
         if not isinstance(uid, uuid.UUID):
-            return 0
+            raise TypeError(f"Параметр {uid} не является объектом типа UUID")
 
         qs = cls.objects.filter(uid=uid, company__inn=inn, company__address__icontains=address)
-        print(qs)
         if qs.exists():
             return 1
 
@@ -107,3 +106,6 @@ class User(AbstractUser):
         related_name="users",
         null=True,
     )
+
+    USERNAME_FIELD = 'username'
+    objects = CustomUserManager()
