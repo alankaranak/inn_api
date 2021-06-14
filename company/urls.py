@@ -1,7 +1,14 @@
 from django.urls import path
-from company.views import IndexView
+from django.urls.conf import include
+from company.views import CompanyViewSet, CsvViewSet, PersonViewSet
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'persons', PersonViewSet, basename='persons')
+router.register(r'company', CompanyViewSet, basename='company')
+router.register(r'exchange', CsvViewSet, basename='exchange')
 
 
 urlpatterns = [
-    path('', IndexView.as_view(), name='index'),
+    path('', include(router.urls)),
 ]
