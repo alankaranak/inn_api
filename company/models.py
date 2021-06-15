@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 from company.managers import CustomUserManager
+from datetime import date
 
 
 class Company(models.Model):
@@ -49,6 +50,7 @@ class Person(models.Model):
         related_name="persons",
         null=True,
     )
+    expiration_date = models.DateField(verbose_name="Дата окончания", null=True, blank=True)
 
     def __str__(self) -> str:
         return self.fio
@@ -66,16 +68,21 @@ class Person(models.Model):
             return cls(uid=uid)
 
     @classmethod
-    def checkout_data(cls, uid: uuid.UUID, inn: str, address: str) -> int:
+    def checkout_data(cls, uid: uuid.UUID, inn: str, address: str, is_date_included:bool=False) -> int:
         """Последовательная проверка существования записи.
 
-        Параметры:
-        `uid`, `inn`, `address` - str
-        
-        Возвращает: `0` / `1`
+        Аргументы:
+            uid (uuid.UUID): Уникальный идентификатор лицензии
+            inn (str): ИНН
+            address (str): Адрес
+            is_date_included (bool, опционально): Флаг, определяющий проверять ли срок лицензии на истечение. Значение по умолчаянию - False.
 
-        `0` - Совпадений не найдено
-        `1` - Совпадение найдено
+        Исключения:
+            ValueError: Параметры uid, inn, address не были указаны
+            TypeError: Параметр uid не соответсвует типу UUID
+
+        Возвращает:
+            int: 0 - Записи не найдено, 1 - Запись найдена
         """
         if not uid:
             raise ValueError('Поле uid обязательно')
@@ -88,6 +95,10 @@ class Person(models.Model):
             raise TypeError(f"Параметр {uid} не является объектом типа UUID")
 
         qs = cls.objects.filter(uid=uid, company__inn=inn, company__address__icontains=address)
+        
+        if is_date_included:
+            qs = qs.filter(expiration_date__gt=date.today())
+
         if qs.exists():
             return 1
 

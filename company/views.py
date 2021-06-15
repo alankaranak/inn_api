@@ -16,6 +16,7 @@ class PersonViewSet(viewsets.ViewSet):
     uid_param_config = openapi.Parameter('uid', in_=openapi.IN_QUERY, description='Идентификатор', type=openapi.TYPE_STRING)
     address_param_config = openapi.Parameter('address', in_=openapi.IN_QUERY, description='Адрес', type=openapi.TYPE_STRING)
 
+
     @swagger_auto_schema(
         operation_description="Проверка наличия записи по ИНН, УИД или адресу",
         manual_parameters=[
@@ -42,12 +43,17 @@ class PersonViewSet(viewsets.ViewSet):
         uid = uuid.UUID(data.get('uid', None))
         inn = data.get('inn', None)
         address = data.get('address', '')
-        response_data['result'] = Person.checkout_data(uid, inn, address)
-        return Response(response_data)
+        include_date = data.get('include_date', False)
+        is_person_exists = Person.checkout_data(uid, inn, address, is_date_included=include_date)
+        response_data['result'] = is_person_exists
+
+        if is_person_exists == 0:
+            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class CompanyViewSet(viewsets.ViewSet):
-    file_param_config = openapi.Parameter('inn', in_=openapi.IN_BODY, description='.csv файл выгрузки', type=openapi.TYPE_FILE)
     permission_classes = [permissions.IsAuthenticated, ]
     lookup_field = 'inn'
 
