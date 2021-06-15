@@ -10,8 +10,8 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Подтверждение пароля', widget=forms.PasswordInput)
 
     class Meta:
         model = User
@@ -40,9 +40,10 @@ class UserChangeForm(forms.ModelForm):
     password hash display field.
     """
     password = ReadOnlyPasswordHashField(label= ("Password"),
-        help_text= ("Raw passwords are not stored, so there is no way to see "
-                    "this user's password, but you can change the password "
-                    "using <a href=\"../password/\">this form</a>."))
+        help_text= ("Пароли не сохраняются в таком виде, как они есть, "
+                    "таким образом вы не сможете увидеть пароль этого пользователя, "
+                    "но вы можете сменить его, "
+                    "испольуя <a href=\"../password/\">эту форму</a>."))
 
     class Meta:
         model = User
@@ -67,15 +68,17 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_superuser',)
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
-        ('Permissions', {'fields': (
-            'is_superuser', 'is_active', 
+        ('Доступ', {'fields': (
+            'is_superuser', 'is_staff', 'is_active', 
             )
         }),
-        ("info", {
-            "fields": (
-                'fio', 'uid', 'company'
-            )
-        })
+        ('Права', {'fields': (
+            'user_permissions', 'groups'
+        )}),
+        ('Дополнительные поля', {'fields': (
+            'first_name', 'last_name'
+        )})
+        
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
