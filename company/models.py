@@ -98,7 +98,6 @@ class Person(models.Model):
         
         if is_date_included:
             qs = qs.filter(expiration_date__gt=date.today())
-            print(qs)
 
         if qs.exists():
             return 1
