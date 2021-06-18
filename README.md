@@ -52,7 +52,7 @@ docker-compose exec app python manage.py --filename="наименование-в
 https://example.com/swagger - Автодокументация апи
 
 ## Авторизация 
-Отправьте POST запрос по адресу `https://example.com/auth/token/` с параметрами `username`, `password` в теле запроса, где
+Отправьте POST запрос по адресу `http://lic.meapp.ru/auth/token/` с параметрами `username`, `password` в теле запроса, где
 
 `username` - Имя зарегистрированного пользователя
 
@@ -65,7 +65,7 @@ https://example.com/swagger - Автодокументация апи
 ## Ход работы
 
 ### Проверка лицензии
-Отправьте GET запрос по адресу `https://example.com/api/v1/license/scan/` с параметрами `uid`, `inn`, `address`, `include_date` в теле запроса
+Отправьте GET запрос по адресу `http://lic.meapp.ru/api/v1/license/scan/` с параметрами `uid`, `inn`, `address`, `include_date` в теле запроса
 
 `uid` - Уникальный идентификатор пользователя
 
@@ -78,13 +78,13 @@ https://example.com/swagger - Автодокументация апи
 Если в базе существует совпадение по всем трем полям, то в сервер ответит `1`, иначе `0`
 
 ### Загрузка CSV файла лицензий
-Отправьте POST запрос по адресу `https://example.com/api/v1/exchange/upload/` с параметром `file` в теле запроса.
+Отправьте POST запрос по адресу `http://lic.meapp.ru/api/v1/exchange/upload/` с параметром `file` в теле запроса.
 
 `file` - Ваш .csv файл
 
 После успешной обработки файла будет получен ответ со статусом 200
 
 ### Количество лицензий у компании
-Отправьте GET запрос по адресу `https://example.com​/api​/v1​/company​/{inn}​/nol​/`, где `{inn}` - искомый ИНН
+Отправьте GET запрос по адресу `http://lic.meapp.ru​/api​/v1​/company​/{inn}​/nol​/`, где `{inn}` - искомый ИНН
 
 Если по искомому ИНН найдена организация, то сервер ответит количеством лицензий, иначе будет получен ответ со статусом 404
