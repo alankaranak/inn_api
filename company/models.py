@@ -1,8 +1,8 @@
-import re
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 from company.managers import CustomUserManager
+from datetime import date
 
 
 class Company(models.Model):
@@ -38,8 +38,8 @@ class Person(models.Model):
     """Представляет модель человека."""
 
     class Meta:
-        verbose_name = 'Персона'
-        verbose_name_plural = 'Персоны'
+        verbose_name = 'Лицензия'
+        verbose_name_plural = 'Лицензии'
 
     fio = models.CharField(verbose_name="ФИО", max_length=150)
     uid = models.UUIDField(verbose_name="ИД пользователя", default=uuid.uuid4, unique=True)
@@ -50,6 +50,7 @@ class Person(models.Model):
         related_name="persons",
         null=True,
     )
+    expiration_date = models.DateField(verbose_name="Дата окончания", null=True, blank=True)
 
     def __str__(self) -> str:
         return self.fio
@@ -67,29 +68,37 @@ class Person(models.Model):
             return cls(uid=uid)
 
     @classmethod
-    def checkout_data(cls, uid: str, inn: str, address: str) -> int:
+    def checkout_data(cls, uid: uuid.UUID, inn: str, address: str, is_date_included:bool=False) -> int:
         """Последовательная проверка существования записи.
 
-        Параметры:
-        `uid`, `inn`, `address` - str
-        
-        Возвращает: `0` / `1`
+        Аргументы:
+            uid (uuid.UUID): Уникальный идентификатор лицензии
+            inn (str): ИНН
+            address (str): Адрес
+            is_date_included (bool, опционально): Флаг, определяющий проверять ли срок лицензии на истечение. Значение по умолчаянию - False.
 
-        `0` - Совпадений не найдено
-        `1` - Совпадение найдено
+        Исключения:
+            ValueError: Параметры uid, inn, address не были указаны
+            TypeError: Параметр uid не соответсвует типу UUID
+
+        Возвращает:
+            int: 0 - Записи не найдено, 1 - Запись найдена
         """
         if not uid:
-            return 0
-        if not inn:
-            return 0
-        if not address or address is "":
-            return 0
+            raise ValueError('Поле uid обязательно')
+        if not inn or inn == "":
+            raise ValueError('Поле inn обязательно')
+        if not address or address == "":
+            raise ValueError('Поле address обязательно')
 
         if not isinstance(uid, uuid.UUID):
-            return 0
+            raise TypeError(f"Параметр {uid} не является объектом типа UUID")
 
         qs = cls.objects.filter(uid=uid, company__inn=inn, company__address__icontains=address)
-        print(qs)
+        
+        if is_date_included:
+            qs = qs.filter(expiration_date__gt=date.today())
+
         if qs.exists():
             return 1
 
@@ -98,16 +107,6 @@ class Person(models.Model):
 
 class User(AbstractUser):
     """Представляет модель пользователя."""
-
-    fio = models.CharField(verbose_name="ФИО", max_length=150)
-    uid = models.UUIDField(verbose_name="ИД пользователя", default=uuid.uuid4, unique=True)
-    company = models.ForeignKey(
-        Company, 
-        on_delete=models.SET_NULL,
-        verbose_name="ИНН компании",
-        related_name="users",
-        null=True,
-    )
 
     USERNAME_FIELD = 'username'
     objects = CustomUserManager()

@@ -4,6 +4,8 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+IMPORT_DIR = BASE_DIR / 'import'
+
 env = environ.Env()
 environ.Env.read_env(str(BASE_DIR / '.env'))
 
